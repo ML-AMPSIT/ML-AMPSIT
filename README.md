@@ -18,7 +18,7 @@ This diversity in algorithmic approaches is particularly valuable in scenarios w
 
 Given this context, our tool allows users to explore a variety of methodologies, providing a comprehensive perspective on the problem at hand. After evaluating the performance of different algorithms, users have the flexibility to either average the results for a more balanced view or select the best-performing method based on their specific dataset and analysis goals. This multi-faceted approach equips users with the necessary tools to effectively tackle a wide range of problems, including those that are complex or not fully understood, thereby enhancing the robustness and reliability of the analysis.
 
-ML-AMPSIT.ipynb is the core script of the tool, and all other scripts outside of ML-AMPSIT.ipynb are supplementary. Most of these additional scripts are designed to work with the WRF model and parameters from Noah-MP's MPTABLE. However, they can be used optionally based on the specific needs of the user. The key consideration is that as long as the file format required by ML-AMPSIT.ipynb matches the expectations of the script, ML-AMPSIT can work with any generic model and any set of parameters.
+ML-AMPSIT.ipynb is the core script of the tool, and all other scripts outside of ML-AMPSIT.ipynb are supplementary. Most of these additional scripts are designed to work with the WRF model and parameters from Noah-MP's MPTABLE. However, they can be used optionally based on the specific needs of the user. The key consideration is that as long as the file format required by ML-AMPSIT.ipynb matches the expectations of the script, ML-AMPSIT can work with any model output and any set of parameters.
 
 # Included scripts
 
