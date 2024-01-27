@@ -208,9 +208,35 @@ The number of runs to be performed with the surrogate model (only brr and gpr at
 
 
 ## Compatibility
-ML-AMPSIT.ipynb relies on specific file formats, and as long as your data adheres to these formats, the tool can seamlessly accommodate any generic model and parameter set.
+ML-AMPSIT.ipynb relies on specific file formats, and as long as your data adheres to these formats, the tool can seamlessly accommodate any generic model and parameter set. If any of the script does not meet the user needs and therfore will not be used, the user must know that certain files must be created in order for ML-AMPSIT to work. The files to be created are the following:
+
+###X.txt
+This file must contain all the input values, in NxM matrix format where N is the number of simulations and M is the number of parameters. Here is an example of values for 8 simulations and 4 parameters, showing how X.txt must be filled:  
+
+	0.03970 18.78297 0.83512 0.51916
+	0.04016 15.37639 0.72693 0.44887
+	0.04039 16.65808 0.95579 0.45687
+	0.03987 13.25131 0.68650 0.37546
+	0.03994 17.40794 0.77859 0.39695
+	0.04022 14.00146 0.86913 0.47863
+	0.04004 17.93301 0.65800 0.42686
+	0.03978 16.19677 0.66596 0.48523
+
+
+###VAR_R_levV_time.txt
+This file must contain N values, one for each simulation, corresponding to the output of a single variable, a single region specified by the region label and the coordinates x and y, a single vertical level and a single timestep. For example, if we specify in configAMPSIT.json that we have variable V, region label valley (associated to domain coordinates x1:90 y1:30), vertical level 1, and timestep 3, we would need the following file to make it readable by ML-AMPSIT:
+
+	V_valley_lev1_time3.txt
+
+Assuming we have 8 simulations, the contents of the file must follow this format:
+ 
+	1.3085256814956665,1.320160150527954,1.2770142555236816,1.1629282236099243,1.3877079486846924,0.8722674250602722,1.3292431831359863,1.4768025875091553
+
+ML-AMPSIT needs this type of file for each variable, each region, each vertical level and each time. For instance, if we have 2 variables, 4 regions, 10 vertical levels and 24 times, a total of 2x4x10x24=1920 files.
+	
+These files, together with X.txt, configAMPSIT.json, and the optional loopconfig.json, guarantee that ML-AMPSIT will work properly even if the user did not follow the standard workflow.
 
 ## Warning
-If you need to change parameters outside the canopy-related group in MPTABLE.TBL, you cannot use autofill.sh, and you will need to change the parameter values by yourself.
+Currently, if the user needs to change parameters outside of the canopy related group in MPTABLE.TBL, autofill.sh cannot be used and the user must manually change the parameter values. If the user needs to implement ML-AMPSIT on a model other than Noah-MP or WRF, the user must follow the instructions in the Compatibility section to make it work.
 
 
