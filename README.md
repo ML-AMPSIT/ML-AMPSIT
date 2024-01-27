@@ -70,19 +70,19 @@ The configuration file configAMPSIT.json allows the user to fill in all the deta
 
 The following variables are used to generate new realizations based on a main folder (which must be already existent) containing the reference simulation files (namelist, MPTABLE, etc.), and populating the MPTABLES by modifying the specified parameters.
 
-  "folder": "foldersim",
-  "vegtype": 5,
-  "totalsim": 100,
-  "parameter_names": [ "DLEAF", "HVT", "Z0MVT", "RHOL_NIR"],
+	"folder": "foldersim",
+	"vegtype": 5,
+	"totalsim": 100,
+	"parameter_names": [ "DLEAF", "HVT", "Z0MVT", "RHOL_NIR"],
 
 The following variable is used to specify a reference value and a perturbation percentage for each parameters, in the format [middle point, percentage of perturbation]. The reference values will be used by sobol.ipynb to generate one sobol sequence for each parameter within the constrained range [reference - perturbation, reference + perturbation]. The ensemble of sobol sequences will be saved in the file X.txt which must be put on the same folder level as the main folder and the autofill.sh script.
 
-  "MATRIX": [
-    [0.040, 30.000],
-    [16.0, 30.000],
-    [0.80, 30.000],
-    [0.45, 30.000]
-  ],     
+	"MATRIX": [
+	[0.040, 30.000],
+	[16.0, 30.000],
+	[0.80, 30.000],
+	[0.45, 30.000]
+	],     
 
 Taking the above specifications as an example, once these variables are correctly filled, autofill.sh will generate new folders in the range {foldersim_1 , ... , foldersim_100} containing copies of the reference simulation files, each one with a modified MPTABLE.TBL accordingly with the new parameter values inside X.txt. 
 
@@ -95,50 +95,50 @@ Once the ensemble is obtained, each folder will contain the same output file (e.
 
 the variables to extract:
 
-  "variables": ["V","T","LH","HFX"],
+	"variables": ["V","T","LH","HFX"],
 
 the variable dimensions (as of now it accepts only 3d or 2d variables, to be specified in "is_3d" in boolean format (1:yes,0:no)):
 
-  "is_3d": [1,1,0,0],
+	"is_3d": [1,1,0,0],
 
 the starting date and simulation duration:
 
-  "startTime": "2015-03-20 12:00:00",
-  "totalhours": 24,  
+	"startTime": "2015-03-20 12:00:00",
+	"totalhours": 24,  
 
 the ncfile format to recognize the wrfout files: 
 
-  "ncfile_format":"wrfout_d01_2015-03-20_12_00_00",  
+	"ncfile_format":"wrfout_d01_2015-03-20_12_00_00",  
 
 the horizontal domain extension and the interested domain points coordinate:
 
-  "ymax": 120,
-  "xmax": 55,
-  "y1": 90,
-  "x1": 30,
-  "y2": 90,
-  "x2": 26,
-  "y3": 90,
-  "x3": 20,    
-  "y4": 20,
-  "x4": 30
+	"ymax": 120,
+	"xmax": 55,
+	"y1": 90,
+	"x1": 30,
+	"y2": 90,
+	"x2": 26,
+	"y3": 90,
+	"x3": 20,    
+	"y4": 20,
+	"x4": 30
 
 labels for the chosen domain points:
 
-  "regions": ["valley", "slope", "ridge", "plain"],
+	"regions": ["valley", "slope", "ridge", "plain"],
   
 number of vertical level to consider:
 
-  "verticalmax": 10,
+	"verticalmax": 10,
   
 where to find the simulations and where to save the files to be read by ML-AMPSIT:  
 
-  "input_pathname": "E:/X131223VALLEY/",
-  "output_pathname": "C:/Users/username/Documents/XVAL131223/", 
+	"input_pathname": "E:/X131223VALLEY/",
+	"output_pathname": "C:/Users/username/Documents/XVAL131223/", 
 
 the number of tuning iteration, if activated: 
 
-  "tun_iter" : 10,
+	"tun_iter" : 10,
 
 This will complete the configuration specifications needed from this file.
 
