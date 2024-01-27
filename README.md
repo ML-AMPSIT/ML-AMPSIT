@@ -210,7 +210,7 @@ The number of runs to be performed with the surrogate model (only brr and gpr at
 ## Compatibility
 ML-AMPSIT.ipynb relies on specific file formats, and as long as your data adheres to these formats, the tool can seamlessly accommodate any generic model and parameter set. If any of the script does not meet the user needs and therfore will not be used, the user must know that certain files must be created in order for ML-AMPSIT to work. The files to be created are the following:
 
-###X.txt
+### X.txt
 This file must contain all the input values, in NxM matrix format where N is the number of simulations and M is the number of parameters. Here is an example of values for 8 simulations and 4 parameters, showing how X.txt must be filled:  
 
 	0.03970 18.78297 0.83512 0.51916
@@ -223,7 +223,7 @@ This file must contain all the input values, in NxM matrix format where N is the
 	0.03978 16.19677 0.66596 0.48523
 
 
-###VAR_R_levV_time.txt
+### VAR_R_levV_time.txt
 This file must contain N values, one for each simulation, corresponding to the output of a single variable, a single region specified by the region label and the coordinates x and y, a single vertical level and a single timestep. For example, if we specify in configAMPSIT.json that we have variable V, region label valley (associated to domain coordinates x1:90 y1:30), vertical level 1, and timestep 3, we would need the following file to make it readable by ML-AMPSIT:
 
 	V_valley_lev1_time3.txt
