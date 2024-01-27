@@ -94,19 +94,24 @@ Now that the folders are created, the user can run all the simulations to obtain
 Once the ensemble is obtained, each folder will contain the same output file (e.g. wrfout_d01_2015-03-20_12_00_00). Each file must be aggregated in a dedicated folder with the suffix _1, _2, _3, ..., _100. Once everything is ready, WRFload.ipynb will extract from each of the ncfile only the essential data needed for the sensitivity analysis, generating files in a format readable by ML-AMPSIT. To do this it needs to know: 
 
 the variables to extract:
+
   "variables": ["V","T","LH","HFX"],
 
 the variable dimensions (as of now it accepts only 3d or 2d variables, to be specified in "is_3d" in boolean format (1:yes,0:no)):
+
   "is_3d": [1,1,0,0],
 
 the starting date and simulation duration:
+
   "startTime": "2015-03-20 12:00:00",
   "totalhours": 24,  
 
 the ncfile format to recognize the wrfout files: 
+
   "ncfile_format":"wrfout_d01_2015-03-20_12_00_00",  
 
 the horizontal domain extension and the interested domain points coordinate:
+
   "ymax": 120,
   "xmax": 55,
   "y1": 90,
@@ -119,16 +124,20 @@ the horizontal domain extension and the interested domain points coordinate:
   "x4": 30
 
 labels for the chosen domain points:
+
   "regions": ["valley", "slope", "ridge", "plain"],
   
 number of vertical level to consider:
+
   "verticalmax": 10,
   
 where to find the simulations and where to save the files to be read by ML-AMPSIT:  
+
   "input_pathname": "E:/X131223VALLEY/",
   "output_pathname": "C:/Users/username/Documents/XVAL131223/", 
 
 the number of tuning iteration, if activated: 
+
   "tun_iter" : 10,
 
 This will complete the configuration specifications needed from this file.
@@ -189,9 +198,11 @@ The tuning options, where 0: no tuning, 1: perform the tuning and save the best 
     "tun": 0,
 
 The number of hours must be specified for internal code reasons:
+
     "hour": 24,
 
 The number of runs to be performed with the surrogate model (only brr and gpr at the moment can use the sobol method) to compute the sobol indices:
+
     "Nsobol": 1000
 
 
