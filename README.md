@@ -52,7 +52,7 @@ The simulation files must follow specific formatting criteria; more instructions
 ## ML-AMPSIT.ipynb
 This is the main script of ML-AMPSIT. It is the central component of the sensitivity analysis. When first loaded, it will present the default graphical interface shown in the figure, where the user can select the type of analysis to be performed.
 
-*inserisci immagine qui*.
+![Interface of ML-AMPSIT](ML-AMPSITdisplay.png).
 
 The user can specify which variable to analyze over which region of the domain, which regression method to use, and much more.
 Many of these options are read from the configAMPSIT.json configuration file, which will be discussed later.
