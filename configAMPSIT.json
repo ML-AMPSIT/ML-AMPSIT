@@ -1,0 +1,39 @@
+{
+
+  "comment1": "following lines are for generating realizations and populating the MPTABLES. folder is the reference simulation folder",
+  "folder": "foldersim",
+  "vegtype": 10,
+  "totalsim": 100,
+  "parameter_names": [ "DLEAF", "HVT", "Z0MVT", "RHOL_NIR", "CWPVT", "LAI_MAR"],
+
+  "comment2": "for each parameters, the following matrix must contain: [middle point, percentage of perturbation]",
+  "MATRIX": [
+    [0.040, 50.000],
+    [1.117, 50.000],
+    [0.112, 50.000],
+    [0.369, 50.000],
+    [1.923, 50.000],
+    [0.237, 50.000]
+  ],    
+
+  "comment3": "following lines are specifications for ML-AMPSIT and post-processing. Change values and folder paths as needed.",
+  "input_pathname": "E:/X231023FLATseabreeze/",
+  "output_pathname": "C:/Users/dario/Documents/MATLABdott/WRF_IDEAL_SIMUL/VARStxt/XFLAT231023p5mean0/", 
+  "totalhours": 36,
+  "variables": ["V_MEAN","TH_MEAN"],
+  "is_3d": [1,1],
+  "regions": ["land", "water"],
+  "verticalmax": 10,
+  "tun_iter" : 10,
+
+  "comment4": "following lines are for WRFload and post-processing: starting date, domain extension and points coordinate",
+  "startTime": "2015-03-20 18:00:00",
+  "ncfile_format":"wrfout_d01_2015-03-20_18_00_00",  
+  "ymax": 50,
+  "xmax": 50,
+  "y1": 30,
+  "x1": 25,
+  "y2": 20,
+  "x2": 25
+
+}
