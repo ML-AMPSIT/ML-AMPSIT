@@ -1,14 +1,19 @@
 
+## DOI Badge
+
+[![DOI](https://zenodo.org/badge/768182093.svg)](https://zenodo.org/doi/10.5281/zenodo.10789929)
+
+
 
 # ML-AMPSIT Tutorial: Getting Started
 
 ## Introduction
 
-ML-AMPSIT is a machine learning based sensitivity tool that uses data-driven models to make predictions based on data that typically comes from a small ensemble of high-fidelity, more computationally intensive simulations. The goal of these models is to build a faster surrogate model to reduce the computational burden at the cost of approximating the original input-output functional relationships. 
+ML-AMPSIT is a machine learning based sensitivity tool that uses data-driven models to make predictions based on data typically coming from a small ensemble of high-fidelity, more computationally intensive simulations. The goal of these models is to build a faster surrogate model to reduce the computational burden at the cost of approximating the original input-output functional relationships. 
 
 Surrogate models are built within ML-AMPSIT to return to the user the weights of each input feature, i.e. the importance of the model parameters. 
 
-Currently, the tool is limited to the following regression algorithms Random Forest (RF), Least Absolute Shrinkage Operator (LASSO), Support Vector Machine (SVM), Bayesian Ridge Regression (BRR), Gaussian Process Regression (GPR), Extreme Gradient Boosting (Xgboost), and Classification And Regression Trees (CART). Most of these regression algorithms provide regression weights by default, while BRR and GPR are probabilistic methods that are used within ML-AMPSIT to compute sensitivity indices via an implementation of the Sobol method ( https://en.wikipedia.org/wiki/Variance-based_sensitivity_analysis ). 
+Currently, the tool is limited to the following regression algorithms: Random Forest (RF), Least Absolute Shrinkage Operator (LASSO), Support Vector Machine (SVM), Bayesian Ridge Regression (BRR), Gaussian Process Regression (GPR), Extreme Gradient Boosting (Xgboost), and Classification And Regression Trees (CART). Most of these regression algorithms provide regression weights by default, while BRR and GPR are probabilistic methods that are used within ML-AMPSIT to compute sensitivity indices via an implementation of the Sobol method ( https://en.wikipedia.org/wiki/Variance-based_sensitivity_analysis ). 
 
 Although the Sobol method is known as a well refined method, it is also known for its very high computational cost. For fast models, the method has been used in the literature with over 10000 runs. For slow methods such as WRF, this could be significantly infeasible. The minimum number of simulations required to obtain consistent sensitivity indices also depends on the specificity of each problem and cannot be known a priori. Thanks to the use of surrogate models, complex models such as WRF can be replaced by a much simpler and faster model, allowing to compute the Sobol indices with drastically less computational resources.
 
@@ -52,7 +57,7 @@ The simulation files must follow specific formatting criteria; more instructions
 ## ML-AMPSIT.ipynb
 This is the main script of ML-AMPSIT. It is the central component of the sensitivity analysis. When first loaded, it will present the default graphical interface shown in the figure, where the user can select the type of analysis to be performed.
 
-![Interface of ML-AMPSIT](ML-AMPSITdisplay.png).
+![Interface of ML-AMPSIT](ML-AMPSITdisplay.png)
 
 The user can specify which variable to analyze over which region of the domain, which regression method to use, and much more.
 Many of these options are read from the configAMPSIT.json configuration file, which will be discussed later.
@@ -244,6 +249,3 @@ These files, together with X.txt, configAMPSIT.json, and the optional loopconfig
 ## Warning
 Currently, if the user needs to change parameters outside of the canopy related group in MPTABLE.TBL, autofill.sh cannot be used and the user must manually change the parameter values. If the user needs to implement ML-AMPSIT on a model other than Noah-MP or WRF, the user must follow the instructions in the Compatibility section to make it work.
 
-## DOI Badge
-
-[![DOI](https://zenodo.org/badge/768182093.svg)](https://zenodo.org/doi/10.5281/zenodo.10789929)
