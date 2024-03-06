@@ -244,4 +244,5 @@ These files, together with X.txt, configAMPSIT.json, and the optional loopconfig
 ## Warning
 Currently, if the user needs to change parameters outside of the canopy related group in MPTABLE.TBL, autofill.sh cannot be used and the user must manually change the parameter values. If the user needs to implement ML-AMPSIT on a model other than Noah-MP or WRF, the user must follow the instructions in the Compatibility section to make it work.
 
-
+##DOI Badge
+[![DOI](https://zenodo.org/badge/768182093.svg)](https://zenodo.org/doi/10.5281/zenodo.10789929)
