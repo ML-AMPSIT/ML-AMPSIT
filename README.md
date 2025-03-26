@@ -27,7 +27,21 @@ ML-AMPSIT.ipynb is the core script of the tool, and all other scripts outside of
 
 # Included scripts
 
-## Additional Scripts
+
+## Fast suite: ML-AMPSITfast.ipynb
+This is the fast execution script of ML-AMPSIT for single-configuration analysis. When first loaded, it will present the default graphical interface shown in the figure, where the user can select the type of analysis to be performed.
+
+![Interface of ML-AMPSIT](ML-AMPSITdisplay.png)
+
+The user can specify which variable to analyze over which region of the domain, which regression method to use, and much more.
+Many of these options are read from the configAMPSIT.json configuration file, which will be discussed later.
+
+## Loop suite: ML-AMPSITloop.ipynb
+The ML-AMPSITloop.ipynb is the extended execution script of ML-AMPSIT. It automate the execution of multiple analyses within a loop without having to manually set the graphical user interface each time. The specifications for the loop must be set in the loopconfig.json, which will be discussed later.
+
+
+
+## Optional pre-processing scripts
 These additional scripts are primarily tailored for use with the WRF model and Noah-MP parameters, but are not mandatory. They can be omitted if they do not meet the specific needs of the user. ML-AMPSIT.ipynb remains adaptable and will work with any generic model and parameter set as long as the file formats are compatible.
 
 ### sobol.ipynb
@@ -54,18 +68,9 @@ After all the simulations are run, the user must place them all in a single fold
 
 The simulation files must follow specific formatting criteria; more instructions on this are provided later in this document.
 
-## ML-AMPSIT.ipynb
-This is the main script of ML-AMPSIT. It is the central component of the sensitivity analysis. When first loaded, it will present the default graphical interface shown in the figure, where the user can select the type of analysis to be performed.
 
-![Interface of ML-AMPSIT](ML-AMPSITdisplay.png)
 
-The user can specify which variable to analyze over which region of the domain, which regression method to use, and much more.
-Many of these options are read from the configAMPSIT.json configuration file, which will be discussed later.
-
-## Loop suite: ML-AMPSITloop.ipynb
-The ML-AMPSITloop.ipynb is a modified version of the ML-AMPSIT.ipynb to automate the execution of multiple analyses within a loop without having to manually set the graphical user interface each time. The specifications for the loop must be set in the loopconfig.json, which will be discussed later.
-
-## Postprocessing
+## Optional post-processing scripts
 
 ### ConvergenceAnlys.ipynb
 This script aims to aggregate the data from the ML-AMPSIT or ML-AMPSITloop output and automatically perform convergence analysis on the results, generating a plot and heatmap from which the user can evaluate if the output is consistent across methods, number of simulations, domain coordinates, and variables. (It may still be under development for public use)
