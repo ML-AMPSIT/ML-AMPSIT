@@ -31,7 +31,7 @@ ML-AMPSIT.ipynb is the core script of the tool, and all other scripts outside of
 ## Fast suite: ML-AMPSITfast.ipynb
 This is the fast execution script of ML-AMPSIT for single-configuration analysis. When first loaded, it will present the default graphical interface shown in the figure, where the user can select the type of analysis to be performed.
 
-![Interface of ML-AMPSIT](ML-AMPSITdisplay.png)
+![Interface of ML-AMPSIT](ML-AMPSITnewdisplay.png)
 
 The user can specify which variable to analyze over which region of the domain, which regression method to use, and much more.
 Many of these options are read from the configAMPSIT.json configuration file, which will be discussed later.
