@@ -17,8 +17,8 @@
   ],    
 
   "comment3": "following lines are specifications for ML-AMPSIT and post-processing. Change values and folder paths as needed.",
-  "input_pathname": "E:/X231023FLATseabreeze/",
-  "output_pathname": "C:/Users/dario/Documents/MATLABdott/WRF_IDEAL_SIMUL/VARStxt/XFLAT231023p5mean0/", 
+  "input_pathname": "input_dir/",
+  "output_pathname": "output_dir/", 
   "totalhours": 36,
   "variables": ["V_MEAN","TH_MEAN"],
   "is_3d": [1,1],
