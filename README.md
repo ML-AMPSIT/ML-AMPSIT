@@ -25,6 +25,9 @@ Given this context, our tool allows users to explore a variety of methodologies,
 
 ML-AMPSIT.ipynb is the core script of the tool, and all other scripts outside of ML-AMPSIT.ipynb are supplementary. Most of these additional scripts are designed to work with the WRF model and parameters from Noah-MP's MPTABLE. However, they can be used optionally based on the specific needs of the user. The key consideration is that as long as the file format required by ML-AMPSIT.ipynb matches the expectations of the script, ML-AMPSIT can work with any model output and any set of parameters.
 
+For a detailed description of the tool and its methodology, please refer to our publication:  
+**[Di Santo et al. (2025)](https://doi.org/10.5194/gmd-18-433-2025)** – *"ML-AMPSIT: Machine Learning-based Automated Multi-method Parameter Sensitivity and Importance analysis Tool."*
+
 # Included scripts
 
 
@@ -183,6 +186,9 @@ The number of runs to be performed with the surrogate model (only brr and gpr at
 
     "Nsobol": 1000
 
+## Case study
+Version 1.2.1 includes a working case study folder derived from the publication by [Di Santo et al. (2025)](https://doi.org/10.5194/gmd-18-433-2025), available in the file `output_dir.zip`. This example is preconfigured to work with the provided config files.
+To try it out, unzip `output_dir.zip` and ensure the extracted folder remains at the same level as `ML-AMPSITfast.ipynb` or `ML-AMPSITloop.ipynb`, depending on which notebook you wish to run.
 
 
 ## Compatibility

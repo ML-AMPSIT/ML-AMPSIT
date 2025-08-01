@@ -6,12 +6,14 @@
 
 import json
 #def load_config(path='E:/secondPAPER/newGRASS/VARStxtFOR_TEST_PURPOSES/configAMPSITvalleynewGRASS.json'):
-def load_config(path='../configAMPSIT.json'):
+#def load_config(path='E:/VARStxt/XFLAT231023p5mean0SCALED_FORTESTPURPOSES/configAMPSITseabreezeSCALED.json'):
+def load_config(path='configAMPSIT.json'):
     with open(path) as f:
         return json.load(f)
 
 #def load_loop_config(path='E:/secondPAPER/newGRASS/VARStxtFOR_TEST_PURPOSES/loopconfig.json'):
-def load_loop_config(path='../loopconfig.json'):
+#def load_loop_config(path='E:/VARStxt/XFLAT231023p5mean0SCALED_FORTESTPURPOSES/loopconfigseabreezeSCALED.json'):
+def load_loop_config(path='loopconfig.json'):
     with open(path, 'r') as f:
         return json.load(f)
 
