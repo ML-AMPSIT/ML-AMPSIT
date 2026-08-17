@@ -1,0 +1,40 @@
+{
+  "base_config": "config_loop.json",
+  "case_name": "Transient heat tuned Loop model comparison",
+  "output_pathname": "outputs/loop_tuning",
+  "tun_iter": 10,
+  "tuning_workers": 1,
+  "tuning_spaces": {
+    "xgboost": {
+      "n_estimators": {"type": "integer", "low": 150, "high": 650},
+      "max_depth": {"type": "integer", "low": 2, "high": 7},
+      "learning_rate": {"type": "real", "low": 0.01, "high": 0.2, "prior": "log-uniform"},
+      "min_child_weight": {"type": "real", "low": 0.1, "high": 12.0, "prior": "log-uniform"},
+      "subsample": {"type": "real", "low": 0.6, "high": 1.0},
+      "colsample_bytree": {"type": "real", "low": 0.6, "high": 1.0},
+      "reg_alpha": {"type": "real", "low": 0.00000001, "high": 5.0, "prior": "log-uniform"},
+      "reg_lambda": {"type": "real", "low": 0.001, "high": 50.0, "prior": "log-uniform"}
+    },
+    "randomforest": {
+      "n_estimators": {"type": "integer", "low": 100, "high": 600},
+      "max_depth": {"type": "integer", "low": 2, "high": 18},
+      "min_samples_split": {"type": "integer", "low": 2, "high": 12},
+      "min_samples_leaf": {"type": "integer", "low": 1, "high": 8},
+      "max_features": {"type": "categorical", "values": ["sqrt", "log2", null]},
+      "bootstrap": {"type": "categorical", "values": [true, false]}
+    },
+    "symbolic": {
+      "population_size": {"type": "integer", "low": 80, "high": 250},
+      "generations": {"type": "integer", "low": 6, "high": 24},
+      "tournament_size": {"type": "integer", "low": 3, "high": 10},
+      "max_depth": {"type": "integer", "low": 3, "high": 6},
+      "crossover_rate": {"type": "real", "low": 0.55, "high": 0.85},
+      "mutation_rate": {"type": "real", "low": 0.1, "high": 0.4},
+      "parsimony_coefficient": {"type": "real", "low": 0.000001, "high": 0.02, "prior": "log-uniform"}
+    },
+    "stacking": {}
+  },
+  "loop_study": {
+    "tuning": 1
+  }
+}

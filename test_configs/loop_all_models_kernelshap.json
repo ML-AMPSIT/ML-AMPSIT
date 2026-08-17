@@ -1,0 +1,52 @@
+{
+  "base_config": "../configAMPSIT.json",
+  "run_mode": "loop",
+  "totaltimesteps": 3,
+  "plot_options": {
+    "enabled": ["performance", "prediction", "importance", "temporal", "uncertainty", "ensemble", "symbolic"],
+    "formats": ["png"],
+    "dpi": 110
+  },
+  "model_options": {
+    "randomforest": {"n_estimators": 20, "max_depth": 4, "n_jobs": 1},
+    "xgboost": {"n_estimators": 20, "max_depth": 3, "n_jobs": 1},
+    "mlp": {"hidden_layer_sizes": [12], "max_iter": 100},
+    "sparse_gp": {"n_inducing": 6},
+    "kan": {"hidden_layer_sizes": [4], "steps": 5, "torch_threads": 1},
+    "symbolic": {"population_size": 50, "generations": 5, "max_depth": 4, "parsimony_coefficient": 0.002},
+    "lightgbm": {"n_estimators": 20, "num_leaves": 7, "n_jobs": 1},
+    "catboost": {"iterations": 20, "depth": 3, "thread_count": 1},
+    "ebm": {"max_rounds": 50, "n_jobs": 1},
+    "ngboost": {"n_estimators": 20},
+    "stacking": {
+      "base_models": ["elasticnet", "cart", "br"],
+      "final_estimator": "ridge",
+      "cv": 2,
+      "passthrough": false,
+      "n_jobs": 1
+    }
+  },
+  "importance_options": {
+    "kernel_shap": {"background": 3, "evaluations": 3}
+  },
+  "loop_study": {
+    "models": [
+      "randomforest", "lasso", "svm", "br", "gp", "xgboost", "cart",
+      "mlp", "elasticnet", "sparse_gp", "kan", "lightgbm", "catboost",
+      "ebm", "ngboost", "stacking", "symbolic"
+    ],
+    "sample_counts": [12],
+    "variable_indices": [1],
+    "vertical_levels": [1, 2],
+    "region_indices": [1],
+    "importance_methods": ["kernel_shap"],
+    "feature_transforms": ["none"],
+    "tuning": 0,
+    "selected_timestep": 2,
+    "sobol_samples": 16,
+    "parallel_workers": 2,
+    "timesteps": [2, 3],
+    "plot_kinds": ["performance", "prediction", "importance", "temporal", "uncertainty", "ensemble", "symbolic"],
+    "comparison_kinds": ["spatial", "temporal"]
+  }
+}

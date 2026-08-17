@@ -1,0 +1,9 @@
+{
+  "equation": "rho c_p dT/dt = k d2T/dx2 + q",
+  "boundary_conditions": "T(0,t)=T_left and T(L,t)=T_right",
+  "initial_condition": "T(x,0)=T_initial for interior sensor positions",
+  "steady_solution": "T(xi)=T_left+(T_right-T_left)xi+[q L^2/(2k)]xi(1-xi), where xi=x/L",
+  "transient_groups": {"thermal_diffusivity": "alpha=k/(rho c_p)", "Fourier_number": "Fo=alpha t/L^2"},
+  "expected_structure": "T_initial dominates at t=0. During the transient, k, rho, c_p, and L act primarily through the Fourier number. At long times the boundary temperatures and q L^2/k determine the spatial profile. Boundary temperatures matter most near their respective edges, while heat generation is strongest near the slab center.",
+  "reference": "Standard exact sine-series solution of the one-dimensional heat equation with a uniform source and Dirichlet boundary conditions."
+}

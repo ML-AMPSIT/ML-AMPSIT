@@ -1,0 +1,30 @@
+{
+  "base_config": "config_loop.json",
+  "case_name": "Traveling Gaussian pulse tuned Loop manifold comparison",
+  "output_pathname": "outputs/loop_tuning",
+  "tun_iter": 16,
+  "tuning_workers": 1,
+  "tuning_spaces": {
+    "xgboost": {
+      "n_estimators": {"type": "integer", "low": 150, "high": 700},
+      "max_depth": {"type": "integer", "low": 2, "high": 7},
+      "learning_rate": {"type": "real", "low": 0.01, "high": 0.2, "prior": "log-uniform"},
+      "min_child_weight": {"type": "real", "low": 0.1, "high": 12.0, "prior": "log-uniform"},
+      "gamma": {"type": "real", "low": 0.00000001, "high": 1.0, "prior": "log-uniform"},
+      "subsample": {"type": "real", "low": 0.6, "high": 1.0},
+      "colsample_bytree": {"type": "real", "low": 0.5, "high": 1.0},
+      "reg_alpha": {"type": "real", "low": 0.00000001, "high": 5.0, "prior": "log-uniform"},
+      "reg_lambda": {"type": "real", "low": 0.001, "high": 50.0, "prior": "log-uniform"}
+    },
+    "symbolic": {
+      "population_size": {"type": "integer", "low": 100, "high": 350},
+      "generations": {"type": "integer", "low": 10, "high": 35},
+      "tournament_size": {"type": "integer", "low": 3, "high": 12},
+      "max_depth": {"type": "integer", "low": 3, "high": 7},
+      "crossover_rate": {"type": "real", "low": 0.55, "high": 0.85},
+      "mutation_rate": {"type": "real", "low": 0.1, "high": 0.4},
+      "parsimony_coefficient": {"type": "real", "low": 0.000001, "high": 0.02, "prior": "log-uniform"}
+    }
+  },
+  "loop_study": {"tuning": 1}
+}

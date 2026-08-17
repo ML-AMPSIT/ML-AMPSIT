@@ -1,0 +1,58 @@
+{
+  "base_config": "config.json",
+  "case_name": "Transient heat deep symbolic tuning",
+  "run_mode": "loop",
+  "output_pathname": "outputs/symbolic_deep_tuning",
+  "tun_iter": 24,
+  "tuning_workers": 1,
+  "emulated_ensemble": {"enabled": false},
+  "model_options": {
+    "symbolic": {
+      "population_size": 500,
+      "generations": 50,
+      "tournament_size": 8,
+      "max_depth": 7,
+      "mutation_depth": 4,
+      "crossover_rate": 0.7,
+      "mutation_rate": 0.25,
+      "elitism": 0.05,
+      "parsimony_coefficient": 0.0001,
+      "function_set": ["add", "sub", "mul", "div", "sin", "cos", "log", "sqrt"]
+    }
+  },
+  "tuning_spaces": {
+    "symbolic": {
+      "population_size": {"type": "integer", "low": 200, "high": 750},
+      "generations": {"type": "integer", "low": 20, "high": 70},
+      "tournament_size": {"type": "integer", "low": 3, "high": 16},
+      "max_depth": {"type": "integer", "low": 4, "high": 8},
+      "mutation_depth": {"type": "integer", "low": 2, "high": 5},
+      "crossover_rate": {"type": "real", "low": 0.5, "high": 0.9},
+      "mutation_rate": {"type": "real", "low": 0.05, "high": 0.45},
+      "elitism": {"type": "real", "low": 0.02, "high": 0.15},
+      "parsimony_coefficient": {"type": "real", "low": 0.00000001, "high": 0.03, "prior": "log-uniform"}
+    }
+  },
+  "plot_options": {
+    "enabled": ["performance", "prediction", "importance", "temporal", "symbolic"],
+    "formats": ["png"],
+    "dpi": 160,
+    "close_after_save": true
+  },
+  "loop_study": {
+    "models": ["symbolic"],
+    "sample_counts": [512],
+    "variable_indices": [1],
+    "vertical_levels": [1, 2, 3, 4, 5],
+    "region_indices": [1],
+    "importance_methods": ["pfi"],
+    "feature_transforms": ["none"],
+    "tuning": 1,
+    "selected_timestep": 5,
+    "sobol_samples": 128,
+    "parallel_workers": 1,
+    "timesteps": [1, 2, 3, 4, 5, 6, 7],
+    "plot_kinds": ["performance", "prediction", "importance", "temporal", "symbolic"],
+    "comparison_kinds": ["spatial", "temporal"]
+  }
+}

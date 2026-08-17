@@ -1,0 +1,22 @@
+{
+  "base_config": "config.json",
+  "run_mode": "loop",
+  "emulated_ensemble": {"enabled": false},
+  "plot_options": {"enabled": ["performance", "prediction", "importance", "temporal", "uncertainty", "manifold", "ensemble", "symbolic"], "formats": ["png"], "dpi": 130, "close_after_save": true},
+  "loop_study": {
+    "models": ["symbolic"],
+    "sample_counts": [256],
+    "variable_indices": [1],
+    "vertical_levels": [1, 2, 3, 4, 5],
+    "region_indices": [1],
+    "importance_methods": ["pfi"],
+    "feature_transforms": ["none"],
+    "tuning": 0,
+    "selected_timestep": 5,
+    "sobol_samples": 128,
+    "parallel_workers": 1,
+    "timesteps": [1, 3, 5, 7],
+    "plot_kinds": ["performance", "prediction", "importance", "temporal", "uncertainty", "manifold", "ensemble", "symbolic"],
+    "comparison_kinds": ["spatial", "temporal"]
+  }
+}

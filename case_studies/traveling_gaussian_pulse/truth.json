@@ -1,0 +1,13 @@
+{
+  "current_profile": "X_j = b + A exp(-d_periodic(s_j, phase)^2 / (2 sigma^2))",
+  "future_target": "y = b + A exp(-d_periodic(s_probe, phase + delta)^2 / (2 sigma^2))",
+  "latent_distribution": {"phase": [0.0, 1.0], "amplitude": [0.8, 1.2]},
+  "fixed_values": {"baseline": 0.05, "width": 0.14, "advection_shift": 0.13, "probe_position": 0.0},
+  "sensor_count": 24,
+  "ambient_dimension": 24,
+  "intrinsic_dimension": 2,
+  "euclidean_embedding_dimension": 3,
+  "geometry": "The periodic phase and amplitude generate a cylindrical two-dimensional manifold embedded in the 24 sensor observations.",
+  "prediction_task": "Predict the fixed-probe response after the pulse has advanced by 0.13 domain lengths.",
+  "reference": "Ren, J., Wolf, W. R., and Mao, X. (2021), Model reduction of traveling-wave problems via Radon cumulative distribution transform, Physical Review Fluids 6, L082501."
+}

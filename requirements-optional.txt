@@ -1,0 +1,6 @@
+# Optional advanced regressors and UMAP. The core package remains usable without these.
+lightgbm>=4.3,<5
+catboost>=1.2,<2
+interpret>=0.7,<1
+ngboost>=0.5,<1
+umap-learn>=0.5,<1

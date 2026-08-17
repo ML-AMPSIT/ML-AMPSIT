@@ -1,0 +1,31 @@
+{
+  "base_config": "config.json",
+  "case_name": "Transient heat complete Loop model comparison",
+  "run_mode": "loop",
+  "output_pathname": "outputs/loop",
+  "emulated_ensemble": {"enabled": false},
+  "model_options": {
+    "xgboost": {"n_estimators": 300, "max_depth": 4, "learning_rate": 0.05, "n_jobs": 1},
+    "randomforest": {"n_estimators": 300, "max_depth": 12, "max_features": 1.0, "n_jobs": 1},
+    "stacking": {"base_models": ["elasticnet", "randomforest", "xgboost"], "final_estimator": "ridge", "cv": 4, "passthrough": false, "n_jobs": 1},
+    "symbolic": {"population_size": 80, "generations": 6, "max_depth": 4, "parsimony_coefficient": 0.002}
+  },
+  "importance_options": {"pfi": {"n_repeats": 8, "scoring": "r2", "n_jobs": 1}},
+  "plot_options": {"enabled": ["performance", "prediction", "importance", "temporal", "uncertainty", "manifold", "ensemble", "symbolic"], "formats": ["png"], "dpi": 130, "close_after_save": true},
+  "loop_study": {
+    "models": ["xgboost", "randomforest", "stacking", "symbolic"],
+    "sample_counts": [256],
+    "variable_indices": [1],
+    "vertical_levels": [1, 2, 3, 4, 5],
+    "region_indices": [1],
+    "importance_methods": ["pfi"],
+    "feature_transforms": ["none"],
+    "tuning": 0,
+    "selected_timestep": 5,
+    "sobol_samples": 128,
+    "parallel_workers": 1,
+    "timesteps": [1, 2, 3, 4, 5, 6, 7],
+    "plot_kinds": ["performance", "prediction", "importance", "temporal", "uncertainty", "manifold", "ensemble", "symbolic"],
+    "comparison_kinds": ["spatial", "temporal"]
+  }
+}

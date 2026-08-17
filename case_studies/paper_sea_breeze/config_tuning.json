@@ -1,0 +1,19 @@
+{
+  "base_config": "config.json",
+  "output_pathname": "outputs/tuning",
+  "tun_iter": 32,
+  "tuning_workers": 1,
+  "tuning_spaces": {
+    "randomforest": {
+      "n_estimators": {"type": "integer", "low": 150, "high": 800},
+      "max_depth": {"type": "integer", "low": 2, "high": 20},
+      "min_samples_split": {"type": "integer", "low": 2, "high": 12},
+      "min_samples_leaf": {"type": "integer", "low": 1, "high": 8},
+      "max_features": {"type": "categorical", "values": ["sqrt", "log2", null]},
+      "bootstrap": {"type": "categorical", "values": [true, false]}
+    }
+  },
+  "fast_study": {
+    "tuning": 1
+  }
+}

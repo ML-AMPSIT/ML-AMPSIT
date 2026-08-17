@@ -1,0 +1,3 @@
+# pyKAN is isolated because PyTorch is a comparatively large dependency.
+torch>=2.2,<3
+pykan>=0.2.8,<1

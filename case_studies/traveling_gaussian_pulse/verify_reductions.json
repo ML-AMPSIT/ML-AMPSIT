@@ -1,0 +1,5 @@
+{
+  "base_config": "config_loop.json",
+  "case_name": "Traveling Gaussian pulse reduction verification",
+  "output_pathname": "outputs/reduction_verification"
+}

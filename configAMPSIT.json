@@ -1,12 +1,12 @@
 {
 
-  "comment1": "following lines are for generating realizations and populating the MPTABLES. folder is the reference simulation folder",
+  "run_mode": "fast",
+
   "folder": "foldersim",
   "vegtype": 10,
   "totalsim": 100,
   "parameter_names": [ "DLEAF", "HVT", "Z0MVT", "RHOL_NIR", "CWPVT", "LAI_MAR"],
 
-  "comment2": "for each parameters, the following matrix must contain: [middle point, percentage of perturbation]",
   "MATRIX": [
     [0.040, 50.000],
     [1.117, 50.000],
@@ -16,21 +16,111 @@
     [0.237, 50.000]
   ],    
 
-  "comment3": "following lines are specifications for ML-AMPSIT and post-processing. Change values and folder paths as needed.",
-  "input_pathname": "input_dir/",
-  "output_pathname": "output_dir/", 
-  "totalhours": 36,
+  "input_pathname": "case_studies/paper_sea_breeze/raw/",
+  "data_pathname": "case_studies/paper_sea_breeze/data/",
+  "output_pathname": "case_studies/paper_sea_breeze/outputs/",
+  "totaltimesteps": 36,
   "variables": ["V_MEAN","TH_MEAN"],
   "is_3d": [1,1],
   "regions": ["land", "water"],
   "verticalmax": 10,
   "tun_iter" : 10,
+  "random_seed": 42,
+  "importance_method": "auto",
+  "feature_transform": "none",
+  "sobol_samples": 1024,
+  "parallel_workers": 2,
+  "tuning_workers": 1,
+  "model_options": {
+    "stacking": {
+      "base_models": ["elasticnet", "randomforest", "xgboost", "gp"],
+      "final_estimator": "ridge",
+      "cv": 5,
+      "passthrough": false,
+      "n_jobs": 1
+    },
+    "sparse_gp": {"n_inducing": 64},
+    "kan": {"hidden_layer_sizes": [8, 4], "steps": 40, "torch_threads": 1, "show_progress": false},
+    "symbolic": {"population_size": 300, "generations": 25, "max_depth": 5, "parsimony_coefficient": 0.001}
+  },
+  "tuning_spaces": {
+    "randomforest": {
+      "n_estimators": {"type": "integer", "low": 50, "high": 400},
+      "max_depth": {"type": "integer", "low": 2, "high": 16},
+      "min_samples_split": {"type": "integer", "low": 2, "high": 12},
+      "min_samples_leaf": {"type": "integer", "low": 1, "high": 8},
+      "max_features": {"type": "categorical", "values": ["sqrt", "log2", null]},
+      "bootstrap": {"type": "categorical", "values": [true, false]}
+    }
+  },
+  "importance_options": {
+    "sobol": {"interaction_tolerance": 0.01, "batch_size": 16384},
+    "pfi": {"n_repeats": 20, "scoring": "r2", "n_jobs": 1},
+    "kernel_shap": {"background": 64, "evaluations": 128},
+    "fast_shap": {"calibration": 64, "evaluations": 128}
+  },
+  "transform_options": {
+    "kernel_pca": {"n_components": 3, "kernel": "rbf"},
+    "umap": {"n_components": 3, "n_neighbors": 15},
+    "diffusion_maps": {"n_components": 3, "diffusion_time": 1, "alpha": 0.5}
+  },
+  "emulated_ensemble": {
+    "enabled": false,
+    "source": "sobol",
+    "sample_count": 256,
+    "input_path": "",
+    "levels": [1],
+    "timesteps": [24],
+    "plot_level": 1,
+    "plot_timestep": 24,
+    "member_lines": 20,
+    "allow_extrapolation": false
+  },
+  "plot_options": {
+    "enabled": ["performance", "prediction", "importance", "temporal", "uncertainty", "manifold", "ensemble", "symbolic"],
+    "formats": ["png"],
+    "dpi": 300,
+    "close_after_save": true
+  },
 
-  "comment4": "following lines are for WRFload and post-processing: starting date, domain extension and points coordinate",
-  "startTime": "2015-03-20 18:00:00",
-  "ncfile_format":"wrfout_d01_2015-03-20_18_00_00",  
-  "ymax": 50,
-  "xmax": 50,
+  "fast_study": {
+    "model": "randomforest",
+    "sample_count": 100,
+    "variable_index": 1,
+    "region_index": 1,
+    "vertical_level": 1,
+    "timesteps": [24],
+    "selected_timestep": 24,
+    "tuning": 0,
+    "importance_method": "pfi",
+    "feature_transform": "none",
+    "parallel_workers": 1,
+    "plot_kinds": ["performance", "prediction", "importance"]
+  },
+
+  "loop_study": {
+    "models": ["randomforest", "lasso", "svm", "br", "gp", "xgboost", "cart"],
+    "sample_counts": [40, 50, 60, 70, 80, 90, 100],
+    "variable_indices": [1, 2],
+    "vertical_levels": [1, 2],
+    "region_indices": [1, 2],
+    "importance_methods": ["auto"],
+    "feature_transforms": ["none"],
+    "tuning": 0,
+    "selected_timestep": 24,
+    "sobol_samples": 2048,
+    "parallel_workers": 2,
+    "timesteps": [24],
+    "plot_kinds": ["performance", "prediction", "importance", "temporal", "uncertainty", "manifold", "ensemble"],
+    "comparison_kinds": ["spatial", "temporal", "convergence"]
+  },
+
+  "ncfile_format":"wrfout_d01_2015-03-20_18_00_00",
+  "wrf_extraction": {
+    "spatial_average": true,
+    "x_points": 3,
+    "y_points": 3
+  },
   "y1": 30,
   "x1": 25,
   "y2": 20,

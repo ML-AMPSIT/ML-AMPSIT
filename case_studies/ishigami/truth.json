@@ -1,0 +1,8 @@
+{
+  "formula": "sin(x1) + 7 sin(x2)^2 + 0.1 x3^4 sin(x1)",
+  "input_distribution": "independent uniform[-pi, pi]",
+  "expected_first_order_sobol": {"x1": 0.3139, "x2": 0.4424, "x3": 0.0},
+  "expected_total_order_sobol": {"x1": 0.5576, "x2": 0.4424, "x3": 0.2437},
+  "interpretation": "x2 has the largest main effect; x3 acts only through its interaction with x1, so first-order and total-order rankings intentionally differ.",
+  "reference": "Ishigami, T. and Homma, T. (1990), An importance quantification technique in uncertainty analysis for computer models."
+}

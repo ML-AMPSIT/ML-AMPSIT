@@ -1,0 +1,20 @@
+{
+  "base_config": "../../configAMPSIT.json",
+  "case_name": "Published WRF/Noah-MP sea-breeze case",
+  "run_mode": "fast",
+  "emulated_ensemble": {"enabled": false, "source": "sobol", "sample_count": 256, "input_path": "", "levels": [1], "timesteps": [24], "plot_level": 1, "plot_timestep": 24, "member_lines": 20, "allow_extrapolation": false},
+  "fast_study": {
+    "model": "randomforest",
+    "sample_count": 100,
+    "variable_index": 1,
+    "region_index": 1,
+    "vertical_level": 1,
+    "timesteps": [24],
+    "selected_timestep": 24,
+    "tuning": 0,
+    "importance_method": "pfi",
+    "feature_transform": "none",
+    "parallel_workers": 1,
+    "plot_kinds": ["performance", "prediction", "importance"]
+  }
+}

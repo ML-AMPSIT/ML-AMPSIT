@@ -1,0 +1,25 @@
+{
+  "base_config": "../configAMPSIT.json",
+  "run_mode": "fast",
+  "totaltimesteps": 3,
+  "plot_options": {
+    "enabled": ["performance", "prediction", "importance", "temporal", "uncertainty"],
+    "formats": ["png"],
+    "dpi": 140
+  },
+  "fast_study": {
+    "model": "br",
+    "sample_count": 20,
+    "variable_index": 1,
+    "region_index": 1,
+    "vertical_level": 1,
+    "selected_timestep": 2,
+    "tuning": 0,
+    "importance_method": "sobol",
+    "feature_transform": "none",
+    "sobol_samples": 32,
+    "parallel_workers": 2,
+    "timesteps": [2, 3],
+    "plot_kinds": ["performance", "prediction", "importance", "temporal", "uncertainty"]
+  }
+}

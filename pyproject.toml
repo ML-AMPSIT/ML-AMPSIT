@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ml-ampsit"
+version = "2.0.0"
+description = "Machine Learning-based Automated Multi-method Parameter Sensitivity and Importance analysis Tool"
+readme = "README.md"
+requires-python = ">=3.10"
+dynamic = ["dependencies"]
+
+[project.gui-scripts]
+ml-ampsit = "ampsit.desktop:main"
+ml-ampsit-fast = "ampsit.desktop:main_fast"
+ml-ampsit-loop = "ampsit.desktop:main_loop"
+
+[project.scripts]
+ml-ampsit-cli = "ampsit.cli:main"
+ml-ampsit-sample = "ampsit.cli:main_sample"
+ml-ampsit-wrfload = "ampsit.cli:main_wrfload"
+
+[project.optional-dependencies]
+advanced = [
+    "lightgbm>=4.3,<5",
+    "catboost>=1.2,<2",
+    "interpret>=0.7,<1",
+    "ngboost>=0.5,<1",
+    "umap-learn>=0.5,<1",
+]
+kan = ["torch>=2.2,<3", "pykan>=0.2.8,<1"]
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+
+[tool.setuptools.packages.find]
+include = ["ampsit*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

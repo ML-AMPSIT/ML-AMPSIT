@@ -1,0 +1,34 @@
+{
+  "base_config": "../configAMPSIT.json",
+  "run_mode": "fast",
+  "totaltimesteps": 3,
+  "model_options": {
+    "symbolic": {
+      "population_size": 100,
+      "generations": 10,
+      "max_depth": 5,
+      "parsimony_coefficient": 0.001
+    }
+  },
+  "importance_options": {
+    "pfi": {"n_repeats": 5, "n_jobs": 1}
+  },
+  "plot_options": {
+    "enabled": ["performance", "prediction", "importance", "temporal", "symbolic"],
+    "formats": ["png"],
+    "dpi": 140
+  },
+  "fast_study": {
+    "model": "symbolic",
+    "sample_count": 24,
+    "variable_index": 1,
+    "region_index": 1,
+    "vertical_level": 1,
+    "timesteps": [2, 3],
+    "selected_timestep": 2,
+    "importance_method": "pfi",
+    "feature_transform": "none",
+    "parallel_workers": 1,
+    "plot_kinds": ["performance", "prediction", "importance", "temporal", "symbolic"]
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "base_config": "config.json",
+  "case_name": "Traveling Gaussian pulse complete Loop manifold comparison",
+  "run_mode": "loop",
+  "output_pathname": "outputs/loop",
+  "emulated_ensemble": {"enabled": false},
+  "model_options": {
+    "xgboost": {"n_estimators": 300, "max_depth": 4, "learning_rate": 0.05, "n_jobs": 1},
+    "symbolic": {"population_size": 140, "generations": 12, "max_depth": 6, "parsimony_coefficient": 0.0005}
+  },
+  "transform_options": {
+    "kernel_pca": {"n_components": 3, "kernel": "rbf"},
+    "umap": {"n_components": 3, "n_neighbors": 15, "min_dist": 0.1, "n_jobs": 1},
+    "diffusion_maps": {"n_components": 3, "diffusion_time": 1, "alpha": 0.5}
+  },
+  "importance_options": {"pfi": {"n_repeats": 8, "scoring": "r2", "n_jobs": 1}},
+  "plot_options": {"enabled": ["performance", "prediction", "importance", "manifold", "symbolic"], "formats": ["png"], "dpi": 140, "close_after_save": true},
+  "loop_study": {
+    "models": ["xgboost", "symbolic"],
+    "sample_counts": [512],
+    "variable_indices": [1],
+    "vertical_levels": [1],
+    "region_indices": [1],
+    "importance_methods": ["pfi"],
+    "feature_transforms": ["none", "kernel_pca", "umap", "diffusion_maps"],
+    "tuning": 0,
+    "selected_timestep": 1,
+    "sobol_samples": 128,
+    "parallel_workers": 1,
+    "timesteps": [1],
+    "plot_kinds": ["performance", "prediction", "importance", "manifold", "symbolic"],
+    "comparison_kinds": []
+  }
+}

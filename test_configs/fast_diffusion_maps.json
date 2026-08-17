@@ -1,0 +1,35 @@
+{
+  "base_config": "../configAMPSIT.json",
+  "run_mode": "fast",
+  "totaltimesteps": 3,
+  "plot_options": {
+    "enabled": ["performance", "prediction", "importance", "temporal", "manifold"],
+    "formats": ["png"],
+    "dpi": 140
+  },
+  "transform_options": {
+    "diffusion_maps": {
+      "n_components": 2,
+      "diffusion_time": 1,
+      "alpha": 0.5
+    }
+  },
+  "importance_options": {
+    "pfi": {"n_repeats": 4, "scoring": "r2", "n_jobs": 1}
+  },
+  "fast_study": {
+    "model": "elasticnet",
+    "sample_count": 24,
+    "variable_index": 1,
+    "region_index": 1,
+    "vertical_level": 1,
+    "selected_timestep": 2,
+    "tuning": 0,
+    "importance_method": "pfi",
+    "feature_transform": "diffusion_maps",
+    "sobol_samples": 16,
+    "parallel_workers": 2,
+    "timesteps": [2, 3],
+    "plot_kinds": ["performance", "prediction", "importance", "temporal", "manifold"]
+  }
+}

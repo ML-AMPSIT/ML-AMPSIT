@@ -1,0 +1,31 @@
+{
+  "base_config": "config.json",
+  "case_name": "Published sea-breeze Loop model comparison",
+  "run_mode": "loop",
+  "output_pathname": "outputs/loop",
+  "emulated_ensemble": {"enabled": false},
+  "model_options": {
+    "randomforest": {"n_estimators": 300, "max_depth": 12, "max_features": 1.0, "n_jobs": 1},
+    "xgboost": {"n_estimators": 300, "max_depth": 4, "learning_rate": 0.05, "n_jobs": 1},
+    "stacking": {"base_models": ["elasticnet", "randomforest", "xgboost"], "final_estimator": "ridge", "cv": 4, "passthrough": false, "n_jobs": 1},
+    "symbolic": {"population_size": 100, "generations": 8, "max_depth": 5, "parsimony_coefficient": 0.002}
+  },
+  "importance_options": {"pfi": {"n_repeats": 8, "scoring": "r2", "n_jobs": 1}},
+  "plot_options": {"enabled": ["performance", "prediction", "importance", "temporal", "uncertainty", "manifold", "ensemble", "symbolic"], "formats": ["png"], "dpi": 130, "close_after_save": true},
+  "loop_study": {
+    "models": ["randomforest", "xgboost", "stacking", "symbolic"],
+    "sample_counts": [100],
+    "variable_indices": [1, 2],
+    "vertical_levels": [1, 2],
+    "region_indices": [1, 2],
+    "importance_methods": ["pfi"],
+    "feature_transforms": ["none"],
+    "tuning": 0,
+    "selected_timestep": 24,
+    "sobol_samples": 128,
+    "parallel_workers": 1,
+    "timesteps": [1, 6, 12, 18, 24, 30, 36],
+    "plot_kinds": ["performance", "prediction", "importance", "temporal", "uncertainty", "manifold", "ensemble", "symbolic"],
+    "comparison_kinds": ["spatial", "temporal"]
+  }
+}

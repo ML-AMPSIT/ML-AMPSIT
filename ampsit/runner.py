@@ -1,342 +1,256 @@
-#!/usr/bin/env python
-# coding: utf-8
+"""Loop/grid orchestration, including cross-run scientific comparisons."""
 
-# In[ ]:
+from __future__ import annotations
 
-import os
-import numpy as np
-import warnings
-import numpy as np
-from sklearn.preprocessing import scale
-from sklearn.preprocessing import MinMaxScaler
-import warnings
-warnings.filterwarnings('ignore')
-
-from ampsit.models import (
-    sa_randomforest, sa_lassoregression, sa_svm,
-    sa_baesyanreg, sa_gaussianreg, sa_xgboost, sa_cart
-)
-
-from ampsit.utils import get_distinct_colors
-import numpy as np
-from scipy.stats import spearmanr
-from sklearn.metrics import mean_squared_error, mean_absolute_error
-
-importance_list = []
-first_ord = []
-score_list = []
-pvalue_list = []
-mse_list = []
-mae_list = []
-ypred = []
-ytest = []
-
+from concurrent.futures import ProcessPoolExecutor, as_completed
+from itertools import product
 import json
-from ampsit.config import load_config
-config = load_config()
+from pathlib import Path
+import traceback
 
-totalhours = config['totalhours']
-variables = config['variables']
-regions = config['regions']
-verticalmax = config['verticalmax']
-totalsim = config['totalsim']
-parameter_names = config['parameter_names']
-output_path = config['output_pathname']
-tun_iter = config['tun_iter']
+import matplotlib
+import numpy as np
 
-from ampsit.config import load_loop_config
-config_data = load_loop_config()
+matplotlib.use("Agg")
 
-hour=config_data['hour'] 
-n_sample=config_data['Nsobol'] #mod nparam+2 == 0
-        
-tun = config_data['tun']      
+from ampsit.analysis import run_timeseries_analysis, save_analysis_tables
+from ampsit.plotting import generate_analysis_figures, generate_loop_comparison_figures
 
 
-def run_analysis_job(meth, N, var, vpoint, hpoint):
-
-    importance_list=[]
-    first_ord=[]
-    score_list = []
-    pvalue_list =[]
-    mse_list = []
-    mae_list = []
-    ypred=[]
-    ytest=[]
-
-  
-    try:
-  
-      if var >= 1 and var <= len(variables):
-          nam1 = variables[var - 1]
-      else:
-          nam1 = 'Invalid var value'
-
-      if hpoint >= 1 and hpoint <= len(regions):
-          nam2 = regions[hpoint - 1]
-      else:
-          nam2 = 'Invalid hpoint value'        
-
-      name=nam1+'_'+nam2+'_lev'+str(vpoint)
-      file_list=[nam1+'_'+nam2+'_lev'+str(vpoint)+'_'+str(i)+'.txt' for i in range(1,totalhours+1)]
-      
-      Xnonscaled = np.loadtxt(output_path+'X.txt') 
-
-
-      for file in file_list:
-
-        f = file
-        ynonscaled = np.loadtxt(output_path+file, delimiter=',')
-        
-        # Taglia i dati a N simulazioni
-        Xnonscaled = Xnonscaled[:N, :]
-        ynonscaled = ynonscaled[:N]
-
-        # Verifica che abbiano la stessa dimensione
-        min_len = min(len(Xnonscaled), len(ynonscaled))
-        Xnonscaled = Xnonscaled[:min_len, :]
-        ynonscaled = ynonscaled[:min_len]
-        
-
-        y=ynonscaled
-        X=Xnonscaled            
-        
-        
-        from sklearn.model_selection import train_test_split
-        
-        partition=0.3
-        
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=partition, random_state=42)
-
-        from sklearn.preprocessing import StandardScaler
-        from joblib import dump
-
-        ##########################
-        ########
-
-        scalerX = StandardScaler()
-        X_train = scalerX.fit_transform(X_train)
-        X_test = scalerX.transform(X_test)
-
-        scalery = StandardScaler()
-        y_train = scalery.fit_transform(y_train.reshape(-1, 1)).ravel()
-        y_test = scalery.transform(y_test.reshape(-1, 1)).ravel()
-
-        
-        ''
-        Xlow = np.min(X_train, axis=0)
-        Xup = np.max(X_train, axis=0)
-        Nn = n_sample 
-        bounds = [(Xlow[i], Xup[i]) for i in range(Xlow.shape[0])]
-        problem = {'num_vars': X.shape[1], 'names': parameter_names, 'bounds': bounds}            
-        ''
-        
-        
-        if meth==1:
-          Si = sa_randomforest(X_train, X_test, y_train, y_test, importance_list,score_list,pvalue_list,mse_list,mae_list,ytest,ypred,f,tun)
-          method='randomforest'
-        elif meth==2:
-          Si = sa_lassoregression(X_train, X_test, y_train, y_test, importance_list,score_list,pvalue_list,mse_list,mae_list,ytest,ypred,f,tun)
-          method='lasso'
-        elif meth==3:
-          Si = sa_svm(X_train, X_test, y_train, y_test,problem,Nn, importance_list,score_list,pvalue_list,mse_list,mae_list,ytest,ypred,f,tun)
-          method='svm'
-        elif meth==4:        
-          Si = sa_baesyanreg(X_train, X_test, y_train, y_test,problem,Nn, importance_list,score_list,pvalue_list,mse_list,mae_list,ytest,ypred,first_ord,f,tun)
-          method='br'
-        elif meth==5:
-          Si = sa_gaussianreg(X_train, X_test, y_train, y_test,problem,Nn, importance_list,score_list,pvalue_list,mse_list,mae_list,ytest,ypred,first_ord,f,tun)
-          method='gp'
-        elif meth==6:
-          Si = sa_xgboost(X_train, X_test, y_train, y_test, importance_list,score_list,pvalue_list,mse_list,mae_list,ytest,ypred,f,tun)
-          method='xgboost'              
-        elif meth==7:
-          Si = sa_cart(X_train, X_test, y_train, y_test, importance_list,score_list,pvalue_list,mse_list,mae_list,ytest,ypred,f,tun)
-          method='cart'
-          
-                      
-        data = np.array([score_list, pvalue_list, mse_list, mae_list]).T
-        import pandas as pd
-        df = pd.DataFrame(data, columns=['score', 'pvalue' , 'mse', 'mae'])
-        importance_df = pd.DataFrame(importance_list)
-        if hour==totalhours:
-          importance_df.to_csv(output_path+'importance'+method+str(N)+file[:-7]+'.txt', header=False, index=False, sep=' ')
-          df.to_csv(output_path+'df'+method+str(N)+file[:-7]+'.txt', header=False, index=False, sep=' ')
-          yt=np.array(ytest)
-          yp=np.array(ypred)
-          
-      ''
-      
-      #print(f"[PID {os.getpid()}] Start: meth={meth}, N={N}, var={var}, vpoint={vpoint}, hpoint={hpoint}")
-      
-      #############################################################################################
-      import matplotlib
-      matplotlib.use('Agg') 
-      import matplotlib.pyplot as plt
-
-      matplotlib.rc('xtick',labelsize=10)
-      matplotlib.rc('ytick',labelsize=10)
-      
-      num_colors = len(parameter_names)
-      cmap = plt.get_cmap('tab20', num_colors)
-      x = np.arange(totalhours - 1)
-
-      pvalue = df.loc[hour-1, 'pvalue']
-      if pvalue < 0.0001:
-          pvalue_str = "<0.0001"
-      else:
-          pvalue_str = "{:.3g}".format(pvalue)
-
-      #print("Len importance_list:", len(importance_list))
-      #print("Len importance_list[0]:", len(importance_list[0]) if importance_list else "vuota")
-      
-      if meth in [4,5]:
-      
-          fig, axs = plt.subplots(nrows=3, ncols=2, figsize=(12, 12))
-
-          x = np.arange(totalhours)
-          from matplotlib.cm import get_cmap
-          cmap = get_cmap('viridis')
-          #colors = [cmap(i / (len(parameter_names)-1)) for i in range(len(parameter_names))]
-          colors = get_distinct_colors(len(parameter_names))
-          metric_colors = {
-          'score': '#1f77b4',   # blu
-          'mse':   '#ff7f0e',   # arancio
-          'mae': '#2ca02c',   # verde
-          'pvalue': '#d62728'    # rosso
-          }
-          #colors = ['b','g','r','c','m','y']
-          #colors = ['#E69F00', '#56B4E9', '#009E73', '#F0E442', '#0072B2', '#D55E00', '#CC79A7', '#999999']
-          for i in range(len(parameter_names)):     
-            axs[0,0].plot(x,[abs(importance_list[j][i]) for j in range(totalhours)],label=parameter_names[i],color=colors[i])    
-          
-          axs[0,0].set_xlabel("Time",fontsize=10)
-          axs[0,0].set_ylabel("Importance",fontsize=10)
-          axs[0,0].set_title('Importance in time',fontsize=10)
-          axs[0,0].legend(prop={'size':4,'weight':'normal'})
-
-          ln1 = axs[0,1].plot(df.index, df['score'], color=metric_colors['score'], label='Score')[0]
-          ln2 = axs[0,1].plot(df.index, df['mse'],  color=metric_colors['mse'],   label='MSE')[0]
-          ln3 = axs[0,1].plot(df.index, df['mae'],  color=metric_colors['mae'],   label='MAE')[0]
-          twin=axs[0,1].twinx()
-          ln4 = twin.plot(df.index, df['pvalue'],   color=metric_colors['pvalue'],label='p-value')[0]
-          twin.set_ylabel('p-value',fontsize=12)
-          twin.set_ylim(0, 1e-15)
-          axs[0,1].set_xlabel('Time',fontsize=12)
-          axs[0,1].set_ylabel('Value',fontsize=12)
-          axs[0,1].set_title('Metrics time evolution',fontsize=12)
-          axs[0,1].set_ylim(0, 1)
-          lns = [ln1, ln2, ln3, ln4]
-          labels = [l.get_label() for l in lns]
-          axs[0,1].legend(lns, labels, prop={'size':10, 'weight':'normal'}, loc='upper center', bbox_to_anchor=(0.15, 0.8))
-          axs[0,1].grid(True)
-
-          axs[1,0].scatter(ytest[hour-1], ypred[hour-1])
-          ideal = [min(ytest[hour-1]), max(ytest[hour-1])]
-          axs[1,0].plot(ideal, ideal, 'r--')
-          axs[1,0].set_xlabel('True Values')
-          axs[1,0].set_ylabel('Predictions')
-          axs[1,0].set_title('Hour: {}; Performance (score: {:.2f} [p: {}], mse: {:.2f}, mae: {:.2f})'.format(hour, df.loc[hour-1, 'score'], pvalue_str, df.loc[hour-1, 'mse'], df.loc[hour-1, 'mae']))
-
-          axs[1,1].bar(parameter_names,importance_list[hour-1])
-          axs[1,1].set_xticklabels(parameter_names, rotation=90, ha='right')
-          axs[1,1].set_xlabel("Features")
-          axs[1,1].set_ylabel("Coefficient")
-          axs[1,1].set_title('Hour: '+str(hour)+'; Sobol total index')
-
-          import seaborn as sns
-          file_path = os.path.join(output_path, f'interactions_matrix_{hour-1}.txt')
-          inter_mat = np.loadtxt(file_path, delimiter='\t')
-          sns.heatmap(inter_mat, annot=True, cmap='coolwarm', fmt=".3f", cbar_kws={'label': 'Sobol second order index'},
-                      xticklabels=parameter_names, yticklabels=parameter_names, ax=axs[2, 0])
-          axs[2, 0].set_title(f'Interactions Matrix {hour}')
-          
-          
-          axs[2,1].bar(parameter_names,first_ord[hour-1])
-          
-          axs[2,1].set_xlabel("Features")
-          axs[2,1].set_ylabel("Coefficient")
-          axs[2,1].set_title('Hour: '+str(hour)+'; Sobol first order index')    
-          axs[2,1].set_xticklabels(parameter_names, rotation=90, ha='right')
-
-      else:
-
-          fig, axs = plt.subplots(nrows=2, ncols=2, figsize=(12, 8))
-
-          x = np.arange(totalhours)
-          #colors = [cmap(i / (len(parameter_names)-1)) for i in range(len(parameter_names))]
-          colors = get_distinct_colors(len(parameter_names))
-          metric_colors = {
-          'score': '#1f77b4',   # blu
-          'mse':   '#ff7f0e',   # arancio
-          'mae': '#2ca02c',   # verde
-          'pvalue': '#d62728'    # rosso
-          }
-          #colors 
-          for i in range(len(parameter_names)):    
-            axs[0,0].plot(x,[abs(importance_list[j][i]) for j in range(totalhours)],label=parameter_names[i],color=colors[i])  
+def _execute_analysis_job(arguments):
+    (
+        model, sample_count, variable_index, vertical_level, region_index,
+        importance_method, feature_transform, config, loop_config, plot_kinds,
+    ) = arguments
+    result = run_timeseries_analysis(
+        config,
+        model=model,
+        sample_count=int(sample_count),
+        variable_index=int(variable_index),
+        region_index=int(region_index),
+        vertical_level=int(vertical_level),
+        tuning=int(loop_config.get("tuning", 0)),
+        importance_method=importance_method,
+        feature_transform=feature_transform,
+        sobol_samples=int(loop_config.get("sobol_samples", config.get("sobol_samples", 1024))),
+        # Each grid point is already isolated in its own process.
+        parallel_workers=1,
+        seed=int(config.get("random_seed", 42)),
+        timesteps=loop_config.get("timesteps"),
+    )
+    save_analysis_tables(result, config, int(sample_count))
+    requested_timestep = int(loop_config.get(
+        "selected_timestep", result.time_steps[-1].timestep
+    ))
+    selected_timestep = requested_timestep if any(item.timestep == requested_timestep for item in result.time_steps) else result.time_steps[-1].timestep
+    figures = generate_analysis_figures(
+        result, config, selected_timestep, kinds=plot_kinds,
+    )
+    records = []
+    for item in result.time_steps:
+        truth = item.y_true_physical if item.y_true_physical is not None else item.y_test
+        prediction = item.y_pred_physical if item.y_pred_physical is not None else item.evaluation.predictions
+        records.append({
+            "model": result.model,
+            "sample_count": int(sample_count),
+            "variable": config["variables"][int(variable_index) - 1],
+            "region": config["regions"][int(region_index) - 1],
+            "vertical_level": int(vertical_level),
+            "importance": result.importance_method,
+            "transform": result.feature_transform,
+            "timestep": int(item.timestep),
+            "selected_timestep": int(selected_timestep),
+            "observed_mean": float(np.nanmean(truth)),
+            "observed_std": float(np.nanstd(truth)),
+            "predicted_mean": float(np.nanmean(prediction)),
+            "predicted_std": float(np.nanstd(prediction)),
+            "r2": float(item.evaluation.metrics.r2),
+            "importance_values": {
+                name: float(value) for name, value in zip(
+                    config["parameter_names"], item.evaluation.importance.values
+                )
+            },
+        })
+    return {
+        "artifact_dir": str(result.artifact_dir),
+        "figures": {name: [str(path) for path in paths] for name, paths in figures.items()},
+        "profile_records": records,
+    }
 
 
-          axs[0,0].set_xlabel("Time",fontsize=10)
-          axs[0,0].set_ylabel("Importance",fontsize=10)
-          axs[0,0].set_title('Importance in time',fontsize=10)
-          axs[0,0].legend(prop={'size':4,'weight':'normal'})
+def _grid_combinations(loop_config):
+    return list(product(
+        loop_config.get("models", []),
+        loop_config.get("sample_counts", []),
+        loop_config.get("variable_indices", []),
+        loop_config.get("vertical_levels", []),
+        loop_config.get("region_indices", []),
+        loop_config.get("importance_methods", []),
+        loop_config.get("feature_transforms", []),
+    ))
 
-          ln1 = axs[0,1].plot(df.index, df['score'], color=metric_colors['score'], label='Score')[0]
-          ln2 = axs[0,1].plot(df.index, df['mse'],  color=metric_colors['mse'],   label='MSE')[0]
-          ln3 = axs[0,1].plot(df.index, df['mae'],  color=metric_colors['mae'],   label='MAE')[0]
-          twin=axs[0,1].twinx()
-          ln4 = twin.plot(df.index, df['pvalue'],   color=metric_colors['pvalue'],label='p-value')[0]
-          twin.set_ylabel('p-value',fontsize=12)
-          twin.set_ylim(0, 1e-15)
-          axs[0,1].set_xlabel('Time',fontsize=12)
-          axs[0,1].set_ylabel('Value',fontsize=12)
-          axs[0,1].set_title('Metrics time evolution',fontsize=12)
-          axs[0,1].set_ylim(0, 1)
-          lns = [ln1, ln2, ln3, ln4]
-          labels = [l.get_label() for l in lns]
-          axs[0,1].legend(lns, labels, prop={'size':10, 'weight':'normal'}, loc='upper center', bbox_to_anchor=(0.15, 0.8))
-          axs[0,1].grid(True)
 
-          axs[1,0].scatter(ytest[hour-1], ypred[hour-1])
-          ideal = [min(ytest[hour-1]), max(ytest[hour-1])]
-          axs[1,0].plot(ideal, ideal, 'r--')
-          axs[1,0].set_xlabel('True Values')
-          axs[1,0].set_ylabel('Predictions')
-          axs[1,0].set_title('Hour: {}; Performance (score: {:.2f} [p: {}], mse: {:.2f}, mae: {:.2f})'.format(hour-1, df.loc[hour-1, 'score'], pvalue_str, df.loc[hour-1, 'mse'], df.loc[hour-1, 'mae']))
+def _prepare_process_dependencies(combinations):
+    """Load native extension modules needed to deserialize worker failures.
 
-          axs[1,1].bar(parameter_names,abs(importance_list[hour-1]))
-          axs[1,1].set_xticklabels(parameter_names, rotation=90, ha='right')
-          axs[1,1].set_xlabel("Features")
-          axs[1,1].set_ylabel("Coefficient")
-          axs[1,1].set_title('Hour: '+str(hour-1)+'; Feature importance')
+    CatBoost exception classes are implemented in ``_catboost``. On Windows'
+    spawn backend the parent must register that extension before receiving an
+    exception or the entire process pool can be reported as broken.
+    """
+    model_keys = {str(combination[0]).lower() for combination in combinations}
+    if "catboost" in model_keys:
+        import catboost  # noqa: F401
 
-      fig.suptitle('Risultati di ' + method + ' su ' + name[:-9] + ' N:'+ str(N) + ' v:' + str(vpoint), fontsize=16)
 
-      plt.tight_layout()
-      fig.canvas.draw()
-      output_file = output_path + method + '_' + name[:-9] + '_hour' + str(hour-1) + '_v' + str(vpoint) + 'N' + str(N) + '.png'
-      #output_file = f"{output_path}_{method}_{name[:-9]}_hour{hour-1}_v{vpoint}_N{N}_pid{os.getpid()}.png"
-      plt.savefig(output_file, dpi=300)
-      #print("Salvato plot in:", output_file) 
-      ''
-      plt.close()
-      
-      importance_list=[]
-      first_ord=[]
-      score_list = []
-      pvalue_list =[]
-      mse_list = []
-      mae_list = []
-      ypred=[]
-      ytest=[]
+def _failure_record(argument, error, *, attempt):
+    combination = argument[:7]
+    return {
+        "combination": list(combination),
+        "attempt": attempt,
+        "exception_type": type(error).__name__,
+        "message": str(error),
+        "traceback": "".join(
+            traceback.format_exception(type(error), error, error.__traceback__)
+        ),
+    }
 
-      print(f"Eseguito: meth={meth}, N={N}, var={var}, vpoint={vpoint}, hpoint={hpoint}")
-      
-    except Exception as e:
-        import traceback
-        print(f"Errore nel processo (meth={meth}, N={N}, var={var}, vpoint={vpoint}, hpoint={hpoint}):")
-        traceback.print_exc()
 
-    return f"{method}-{name}"
+def _write_failure_report(path, records):
+    path.write_text(json.dumps(records, indent=2), encoding="utf-8")
 
+
+def run_analysis_grid(
+    max_workers=None, *, config, loop_config, plot_kinds=None,
+    comparison_kinds=None, cancel_event=None, progress_callback=None,
+):
+    """Run GUI/JSON-defined combinations in parallel worker processes.
+
+    Cancellation prevents queued work from starting; an already fitting model is
+    allowed to finish safely. The returned mapping includes per-run artefacts and
+    cross-run vertical/temporal comparison figures.
+    """
+    if plot_kinds is None:
+        defaults = loop_config.get(
+            "plot_kinds", config.get("plot_options", {}).get("enabled", ())
+        )
+        plot_kinds = tuple(defaults) or None
+    if comparison_kinds is None:
+        comparison_kinds = tuple(loop_config.get(
+            "comparison_kinds", ("spatial", "temporal", "convergence")
+        ))
+    combinations = _grid_combinations(loop_config)
+    if not combinations:
+        raise ValueError("The Loop study contains no combinations.")
+    comparison_root = Path(config["output_pathname"]) / "analysis_outputs" / "loop_comparisons"
+    comparison_root.mkdir(parents=True, exist_ok=True)
+    (comparison_root / "loop_study_manifest.json").write_text(
+        json.dumps({
+            "mode": "loop",
+            "combination_count": len(combinations),
+            "loop_selection": loop_config,
+            "plot_kinds": list(plot_kinds or ()),
+            "comparison_kinds": list(comparison_kinds or ()),
+            "output_pathname": config["output_pathname"],
+            "data_pathname": config["data_pathname"],
+            "random_seed": config.get("random_seed", 42),
+        }, indent=2),
+        encoding="utf-8",
+    )
+    if max_workers is None:
+        configured = int(loop_config.get("parallel_workers", 0))
+        max_workers = configured or None
+    if max_workers != 1:
+        _prepare_process_dependencies(combinations)
+    arguments = [(
+        *combination, config, loop_config, tuple(plot_kinds) if plot_kinds else None
+    ) for combination in combinations]
+    results = []
+    failure_report = comparison_root / "loop_errors.json"
+    # The report describes this invocation, not an earlier failed study.
+    _write_failure_report(failure_report, [])
+    failure_records = []
+    recovered_failures = []
+    total = len(arguments)
+    if max_workers == 1:
+        for index, argument in enumerate(arguments, start=1):
+            if cancel_event is not None and cancel_event.is_set():
+                break
+            results.append(_execute_analysis_job(argument))
+            if progress_callback:
+                progress_callback(index, total)
+    else:
+        executor = ProcessPoolExecutor(max_workers=max_workers)
+        futures = {executor.submit(_execute_analysis_job, argument): argument for argument in arguments}
+        completed = 0
+        try:
+            for future in as_completed(futures):
+                if cancel_event is not None and cancel_event.is_set():
+                    for pending in futures:
+                        pending.cancel()
+                    break
+                argument = futures[future]
+                try:
+                    results.append(future.result())
+                except Exception as error:
+                    failure_records.append(
+                        _failure_record(argument, error, attempt="parallel")
+                    )
+                    _write_failure_report(failure_report, failure_records)
+                completed += 1
+                if progress_callback:
+                    progress_callback(completed, total)
+        finally:
+            executor.shutdown(wait=not (cancel_event is not None and cancel_event.is_set()), cancel_futures=True)
+        if failure_records and loop_config.get("retry_failed_serially", True):
+            failed_arguments = [
+                argument for argument in arguments
+                if tuple(argument[:7]) in {
+                    tuple(record["combination"]) for record in failure_records
+                }
+            ]
+            # Retry outside the process pool. This handles transient native-library
+            # and resource failures without rerunning successful configurations.
+            for argument in failed_arguments:
+                if cancel_event is not None and cancel_event.is_set():
+                    break
+                try:
+                    results.append(_execute_analysis_job(argument))
+                except Exception as error:
+                    failure_records.append(
+                        _failure_record(argument, error, attempt="serial_retry")
+                    )
+                    _write_failure_report(failure_report, failure_records)
+                else:
+                    recovered_failures.append(list(argument[:7]))
+
+        unrecovered = []
+        failed_parallel = {
+            tuple(record["combination"])
+            for record in failure_records if record["attempt"] == "parallel"
+        }
+        recovered = {tuple(combination) for combination in recovered_failures}
+        for combination in sorted(failed_parallel - recovered, key=str):
+            latest = next(
+                record for record in reversed(failure_records)
+                if tuple(record["combination"]) == combination
+            )
+            unrecovered.append((combination, latest))
+        if unrecovered and not (cancel_event is not None and cancel_event.is_set()):
+            details = "; ".join(
+                f"{combination}: {record['exception_type']}: {record['message']}"
+                for combination, record in unrecovered
+            )
+            raise RuntimeError(
+                f"{len(unrecovered)} Loop configuration(s) failed after serial retry: "
+                f"{details}. Full tracebacks: {failure_report}"
+            )
+    comparisons = generate_loop_comparison_figures(
+        results, config, kinds=tuple(comparison_kinds or ())
+    )
+    return {
+        "runs": results,
+        "comparisons": {name: [str(path) for path in paths] for name, paths in comparisons.items()},
+        "cancelled": bool(cancel_event is not None and cancel_event.is_set()),
+        "recovered_failures": recovered_failures,
+        "failure_report": str(failure_report) if failure_records else None,
+    }

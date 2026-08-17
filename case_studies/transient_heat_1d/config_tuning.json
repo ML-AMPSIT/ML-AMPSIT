@@ -1,0 +1,22 @@
+{
+  "base_config": "config.json",
+  "output_pathname": "outputs/tuning",
+  "tun_iter": 24,
+  "tuning_workers": 1,
+  "tuning_spaces": {
+    "xgboost": {
+      "n_estimators": {"type": "integer", "low": 150, "high": 700},
+      "max_depth": {"type": "integer", "low": 2, "high": 7},
+      "learning_rate": {"type": "real", "low": 0.01, "high": 0.2, "prior": "log-uniform"},
+      "min_child_weight": {"type": "real", "low": 0.1, "high": 12.0, "prior": "log-uniform"},
+      "gamma": {"type": "real", "low": 0.00000001, "high": 1.0, "prior": "log-uniform"},
+      "subsample": {"type": "real", "low": 0.6, "high": 1.0},
+      "colsample_bytree": {"type": "real", "low": 0.6, "high": 1.0},
+      "reg_alpha": {"type": "real", "low": 0.00000001, "high": 5.0, "prior": "log-uniform"},
+      "reg_lambda": {"type": "real", "low": 0.001, "high": 50.0, "prior": "log-uniform"}
+    }
+  },
+  "fast_study": {
+    "tuning": 1
+  }
+}

@@ -1,38 +1,21 @@
-#!/usr/bin/env python
-# coding: utf-8
+"""Small shared helpers for numerical normalization and cancellation."""
 
-# In[ ]:
+import numpy as np
 
 
-def nearest_divisible(n , lst):
-  size = len(lst)
-  remainder = n % (size+2)
-  if remainder == 0:
-    return n
-  diff = size - remainder
-  return n + diff
+def normalize_importance(values):
+    """Normalize finite absolute importance values using a NaN-safe sum."""
+    values = np.abs(np.asarray(values, dtype=float))
+    denominator = np.nansum(values)
+    if not np.isfinite(denominator) or denominator <= 0:
+        return np.zeros_like(values)
+    return values / denominator
 
-import matplotlib.pyplot as plt
 
-def get_distinct_colors(n):
-    base_colors = list(plt.get_cmap('tab20').colors)  # 20 colori distinti
-    extra_needed = n - len(base_colors)
+class AnalysisCancelled(RuntimeError):
+    """Raised when a cooperative cancellation request is observed."""
 
-    if extra_needed <= 0:
-        return base_colors[:n]
-    
-    # Genera colori supplementari (es. con 'hls' per buona separazione)
-    import seaborn as sns
-    extra_colors = sns.color_palette("hls", extra_needed)
 
-    return base_colors + extra_colors
-  
-import time
-def start_timer(stop_flag, label):
-    start = time.time()
-    while not stop_flag["value"]:
-        elapsed = time.time() - start
-        label.value = f"Elapsed time: {elapsed:.1f}s"
-        time.sleep(1)
-        
-        
+def check_cancelled(cancel_event):
+    if cancel_event is not None and cancel_event.is_set():
+        raise AnalysisCancelled("Analysis cancelled by the user")
